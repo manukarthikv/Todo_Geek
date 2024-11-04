@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { addTodo, updateTodo } from '../slices/todoSlice';
-import styles from '../styles/modules/modal.module.scss';
 import Button from './Button';
 
 const dropIn = {
@@ -32,8 +31,9 @@ const dropIn = {
 
 function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const dispatch = useDispatch();
-  const [title, setTitle] = useState('');
-  const [status, setStatus] = useState('incomplete');
+  const [title, setTitle] = React.useState('');
+  const [status, setStatus] = React.useState('incomplete');
+  const [isHovered, setIsHovered] = useState(false); // State for hover effect
 
   useEffect(() => {
     if (type === 'update' && todo) {
@@ -80,25 +80,62 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
     <AnimatePresence>
       {modalOpen && (
         <motion.div
-          className={styles.wrapper}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className={styles.container}
+            style={{
+              backgroundColor: 'var(--bg-2)',
+              maxWidth: '500px',
+              width: '90%',
+              margin: '0 auto',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '2rem',
+              borderRadius: '8px',
+              position: 'relative',
+            }}
             variants={dropIn}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
             <motion.div
-              className={styles.closeButton}
-              onKeyDown={() => setModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '-10px',
+                right: 0,
+                transform: 'translateY(-100%)',
+                fontSize: '2.5rem',
+                padding: '0.5rem',
+                borderRadius: '4px',
+                backgroundColor: isHovered ? 'red' : 'var(--gray-1)', // Change background color on hover
+                color: 'var(--black-2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: '0.3s ease all',
+              }}
               onClick={() => setModalOpen(false)}
+              onMouseEnter={() => setIsHovered(true)} // Set hover state to true on mouse enter
+              onMouseLeave={() => setIsHovered(false)} // Set hover state to false on mouse leave
               role="button"
               tabIndex={0}
-              // animation
               initial={{ top: 40, opacity: 0 }}
               animate={{ top: -10, opacity: 1 }}
               exit={{ top: 40, opacity: 0 }}
@@ -106,31 +143,65 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
               <MdOutlineClose />
             </motion.div>
 
-            <form className={styles.form} onSubmit={(e) => handleSubmit(e)}>
-              <h1 className={styles.formTitle}>
+            <form style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <h1
+                style={{
+                  color: '#444444',
+                  fontSize: '2.5rem',
+                  fontWeight: 600,
+                  marginBottom: '2rem',
+                  textTransform: 'uppercase',
+                }}
+              >
                 {type === 'add' ? 'Add' : 'Update'} TODO
               </h1>
-              <label htmlFor="title">
+              <label htmlFor="title" style={{ display: 'block', fontSize: '1.5rem', marginBottom: '0.5rem', color: '#707070' }}>
                 Title
                 <input
                   type="text"
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  style={{
+                    marginTop: '0.5rem',
+                    marginBottom: '2rem',
+                    width: '100%',
+                    padding: '1rem',
+                    border: 'none',
+                    backgroundColor: 'var(--white)',
+                    fontSize: '1.8rem',
+                  }}
                 />
               </label>
-              <label htmlFor="type">
+              <label htmlFor="type" style={{ display: 'block', fontSize: '1.5rem', marginBottom: '0.5rem', color: '#707070' }}>
                 Status
                 <select
                   id="type"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
+                  style={{
+                    marginTop: '0.5rem',
+                    marginBottom: '2rem',
+                    width: '100%',
+                    padding: '1rem',
+                    border: 'none',
+                    backgroundColor: 'var(--white)',
+                    fontSize: '1.8rem',
+                  }}
                 >
                   <option value="incomplete">Incomplete</option>
                   <option value="complete">Completed</option>
                 </select>
               </label>
-              <div className={styles.buttonContainer}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  marginTop: '2rem',
+                  gap: '1rem',
+                }}
+              >
                 <Button type="submit" variant="primary">
                   {type === 'add' ? 'Add Task' : 'Update Task'}
                 </Button>
@@ -139,6 +210,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                 </Button>
               </div>
             </form>
+
           </motion.div>
         </motion.div>
       )}

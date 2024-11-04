@@ -1,36 +1,54 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button, { SelectButton } from './Button';
-import styles from '../styles/modules/app.module.scss';
 import TodoModal from './TodoModal';
-import { updateFilterStatus } from '../slices/todoSlice';
+import { updateFilterStatus, toggleModal } from '../slices/todoSlice';
 
 function AppHeader() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const initialFilterStatus = useSelector((state) => state.todo.filterStatus);
-  const [filterStatus, setFilterStatus] = useState(initialFilterStatus);
   const dispatch = useDispatch();
+  const modalOpen = useSelector((state) => state.todo.modalOpen);
+  const filterStatus = useSelector((state) => state.todo.filterStatus);
 
   const updateFilter = (e) => {
-    setFilterStatus(e.target.value);
     dispatch(updateFilterStatus(e.target.value));
   };
 
   return (
-    <div className={styles.appHeader}>
-      <Button variant="primary" onClick={() => setModalOpen(true)}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '1rem', // Small gap between buttons and task container
+      }}
+    >
+      <Button variant="primary" onClick={() => dispatch(toggleModal())}>
         Add Task
       </Button>
       <SelectButton
         id="status"
-        onChange={(e) => updateFilter(e)}
+        onChange={updateFilter}
         value={filterStatus}
+        style={{
+          marginLeft: '0.5rem',
+          padding: '0.8rem 1.5rem', // Adjust padding to fit text better
+          borderRadius: '6px',
+          backgroundColor: '#cccccc', // Light gray background
+          fontSize: '1.6rem',
+          cursor: 'pointer',
+          width: '150px', // Slightly increased width to accommodate options
+          textAlign: 'left', // Left align text for better visibility
+        }}
       >
         <option value="all">All</option>
         <option value="incomplete">Incomplete</option>
         <option value="complete">Completed</option>
       </SelectButton>
-      <TodoModal type="add" modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      <TodoModal
+        type="add"
+        modalOpen={modalOpen}
+        setModalOpen={() => dispatch(toggleModal())}
+      />
     </div>
   );
 }

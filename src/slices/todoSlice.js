@@ -1,19 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const getInitialTodo = () => {
-  // getting todo list
   const localTodoList = window.localStorage.getItem('todoList');
-  // if todo list is not empty
   if (localTodoList) {
     return JSON.parse(localTodoList);
   }
-  window.localStorage.setItem('todoList', []);
+  window.localStorage.setItem('todoList', JSON.stringify([]));
   return [];
 };
 
 const initialValue = {
   filterStatus: 'all',
   todoList: getInitialTodo(),
+  modalOpen: false,
 };
 
 export const todoSlice = createSlice({
@@ -25,18 +24,12 @@ export const todoSlice = createSlice({
       const todoList = window.localStorage.getItem('todoList');
       if (todoList) {
         const todoListArr = JSON.parse(todoList);
-        todoListArr.push({
-          ...action.payload,
-        });
+        todoListArr.push({ ...action.payload });
         window.localStorage.setItem('todoList', JSON.stringify(todoListArr));
       } else {
         window.localStorage.setItem(
           'todoList',
-          JSON.stringify([
-            {
-              ...action.payload,
-            },
-          ])
+          JSON.stringify([{ ...action.payload }])
         );
       }
     },
@@ -58,21 +51,28 @@ export const todoSlice = createSlice({
       const todoList = window.localStorage.getItem('todoList');
       if (todoList) {
         const todoListArr = JSON.parse(todoList);
-        todoListArr.forEach((todo, index) => {
-          if (todo.id === action.payload) {
-            todoListArr.splice(index, 1);
-          }
-        });
-        window.localStorage.setItem('todoList', JSON.stringify(todoListArr));
-        state.todoList = todoListArr;
+        const filteredTodos = todoListArr.filter(
+          (todo) => todo.id !== action.payload
+        );
+        window.localStorage.setItem('todoList', JSON.stringify(filteredTodos));
+        state.todoList = filteredTodos;
       }
     },
     updateFilterStatus: (state, action) => {
       state.filterStatus = action.payload;
     },
+    toggleModal: (state) => {
+      state.modalOpen = !state.modalOpen;
+    },
   },
 });
 
-export const { addTodo, updateTodo, deleteTodo, updateFilterStatus } =
-  todoSlice.actions;
+export const {
+  addTodo,
+  updateTodo,
+  deleteTodo,
+  updateFilterStatus,
+  toggleModal,
+} = todoSlice.actions;
+
 export default todoSlice.reducer;

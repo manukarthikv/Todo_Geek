@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <div className="container">
-        <PageTitle>TODO List</PageTitle>
+        <PageTitle>TODO LIST</PageTitle>
         <div className={styles.app__wrapper}>
           <AppHeader />
           <AppContent />
@@ -19,7 +19,7 @@ function App() {
         position="bottom-right"
         toastOptions={{
           style: {
-            fontSize: '1.4rem',
+            fontSize: '1.5rem',
           },
         }}
       />

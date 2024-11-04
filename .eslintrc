@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended"  
+  ],
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": "off", // This disables Prettier errors
+    "no-console": "off", // Disable warnings for console.log
+    "no-unused-vars": "warn" // Change unused vars to warning instead of error
+  }
+}

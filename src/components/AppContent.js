@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import styles from '../styles/modules/app.module.scss';
 import TodoItem from './TodoItem';
 
 const container = {
@@ -14,11 +13,36 @@ const container = {
     },
   },
 };
+
 const child = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
+  },
+};
+
+// Inline styles for the container and empty message
+const styles = {
+  contentWrapper: {
+    maxWidth: '750px',
+    width: '100%',
+    margin: '0 auto',
+    backgroundColor: '#f0f4f8',
+    padding: '2rem',
+    borderRadius: '12px',
+  },
+  emptyText: {
+    fontSize: '1.6rem',
+    fontWeight: '500',
+    color: '#555',
+    textAlign: 'center',
+    margin: '0 auto',
+    padding: '0.5rem 1rem',
+    borderRadius: '8px',
+    backgroundColor: '#d3d3d3',
+    width: 'max-content',
+    height: 'auto',
   },
 };
 
@@ -38,7 +62,7 @@ function AppContent() {
 
   return (
     <motion.div
-      className={styles.content__wrapper}
+      style={styles.contentWrapper} // Apply inline styles here
       variants={container}
       initial="hidden"
       animate="visible"
@@ -46,12 +70,10 @@ function AppContent() {
       <AnimatePresence>
         {filteredTodoList && filteredTodoList.length > 0 ? (
           filteredTodoList.map((todo) => (
-            // <motion.div key={todo.id} variants={child}>
-            <TodoItem key={todo.id} todo={todo} />
-            // </motion.div>
+            <TodoItem key={todo.id} todo={todo} /> // No parentheses around this line
           ))
         ) : (
-          <motion.p variants={child} className={styles.emptyText}>
+          <motion.p variants={child} style={styles.emptyText}>
             No Todos
           </motion.p>
         )}
